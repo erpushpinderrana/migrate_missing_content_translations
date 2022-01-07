@@ -1,0 +1,8 @@
+name: Migrate Missing Multilingual Content Translations
+description: Migrate Multilingual Content translations from Drupal 7 to Drupal 9.
+dependencies:
+  - migrate
+  - migrate_plus
+  - migrate_tools
+type: module
+core_version_requirement: ^8.8 || ^9

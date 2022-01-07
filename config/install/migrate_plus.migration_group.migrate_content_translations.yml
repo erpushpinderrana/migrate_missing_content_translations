@@ -1,0 +1,11 @@
+id: migrate_content_translations
+label: Migrate Content translations
+description: Migrate Only Multilingual Content from Drupal 7 to Drupal 9.
+source_type: Drupal 7
+shared_configuration:
+  source:
+    key: migrate
+dependencies:
+  enforced:
+    module:
+      - migrate_missing_content_translations

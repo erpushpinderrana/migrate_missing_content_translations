@@ -1,0 +1,43 @@
+id: migrate_article_translations
+label: Migrate Multilingual Article Content from translations Drupal 7 to Drupal 9.
+migration_group: migrate_content_translations
+migration_tags:
+  - node
+  - article
+  - d7
+source:
+  plugin: custom_node_translations
+  node_type: article
+  translations: true
+process:
+  title: title
+  uid: uid
+  status: status
+  created: created
+  changed: changed
+  body: body
+  field_subheading: field_subheading
+  field_url:
+    plugin: field_link
+    source: field_article_link
+  langcode:
+    default_value: und
+    plugin: default_value
+    source: language
+  nid:
+    plugin: custom_migration_lookup
+    source: tnid
+    migration: type_article
+  promote: promote
+  path/alias: alias
+  path/pathauto:
+    default_value: false
+    plugin: default_value
+destination:
+  plugin: entity:node
+  default_bundle: article
+  translations: true
+dependencies:
+  enforced:
+    module:
+      - migrate_content_translations
