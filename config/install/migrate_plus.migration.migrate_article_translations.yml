@@ -1,14 +1,55 @@
+# Migration Metadata.
+
+# Migration unique id.
 id: migrate_article_translations
+
+# Migration Label
 label: Migrate Multilingual Article Content from translations Drupal 7 to Drupal 9.
+
+# Migration Group
 migration_group: migrate_content_translations
+
+# Migration Tags
 migration_tags:
   - node
   - article
   - d7
+  
+# Migration source  
 source:
+  # Since the existing base/source migration plugins are no longer available
+  # hence using a custom source plugin. 
+  #
+  # The custom_node_translations plugin only fetch the translated nodes
+  # based of article content type. That's why the translation paramter is
+  # also set to true.
+  # Example: In D7, there is a node nid 2 which has multiple translations
+  # with different nid but the source language nid is 2. It stores as tnid
+  # in the D7 DB for other associated translations. Once we pass the tnid
+  # as source nids then it only returns the translated nids.
   plugin: custom_node_translations
+  
+  # The content type that needs to be migrated.
   node_type: article
+  
+  # No need to add a new node, just add the translation for given nid.
   translations: true
+  
+  # Specify the source database key. If don't specify, by default it's migrate.
+  # This key is nothing but the databases array in your settings.php file.
+  # $databases['drupal7']['default'] = [
+  #   'driver'   => 'mysql',
+  #   'host'     => getenv('DB_MYSQL_HOST'),
+  #   'username' => getenv('DB_MYSQL_USER'),
+  #   'password' => getenv('DB_MYSQL_PASSWORD'),
+  #   'database' => 'drupal7',
+  # ];
+  key: drupal7
+
+# Migration Process
+# It performs the mapping between source and destination fields.
+# Syntax is Destination Field: Source Field.
+# Example: field_url field is in D9 and field_article_link is in D7.
 process:
   title: title
   uid: uid
@@ -17,6 +58,12 @@ process:
   changed: changed
   body: body
   field_subheading: field_subheading
+  
+  # Using field_link plugin provided by core link module.
+  # Look for this syntax for more understanding.
+  # * @MigrateProcessPlugin(
+  # *   id = "field_link"
+  # * )
   field_url:
     plugin: field_link
     source: field_article_link
@@ -24,19 +71,42 @@ process:
     default_value: und
     plugin: default_value
     source: language
+  
+  # This mapping defines the actual destination nid.
+  # Since the source migration plugin no longer available so
+  # can't use the OOTB Migration Lookup module. Hence, developed
+  # custom lookup to use the existing migration mapping tables to
+  # get the correct destination id. The custom_migration_lookup
+  # plugin gets the destination id from the existing mapping table
+  # i.e. migrate_map_type_article. Now the processor knows for what node the
+  # translations need to be added.
+  # Example: In D7, there is a node nid 2 (source language) which has multiple
+  # translations. Since the source language migration is already taken place so
+  # in the old existing migration mapping table i.e migrate_map_type_article,
+  # the destination id for 2 is 201. So this migration look up will return 201.
+  # Once we know the destination id then it is just a matter of associated
+  # translations.
   nid:
     plugin: custom_migration_lookup
     source: tnid
     migration: type_article
   promote: promote
+  
   path/alias: alias
   path/pathauto:
     default_value: false
     plugin: default_value
+    
+# Migration destination    
 destination:
+  # Create article nodes from the source data,
+  # Core provided `entity:node` destination plugin.
   plugin: entity:node
   default_bundle: article
   translations: true
+  
+# Always add them because once the module gets uninstalled,
+# the configuration should also be uninstalled.
 dependencies:
   enforced:
     module:
