@@ -16,6 +16,14 @@ use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Note: Copy the Migration Lookup plugin to write custom queries in our case.
+ * Question: Why did I not inherit this plugin instead of overriding?
+ * Well, there are a couple of reasons:
+ * The base (source language) migration modules are no longer available and
+ * MigraitonLookup module looks for the active plugins.
+ * Second, there are custom queries need to be written based on the existing
+ * migration mapping tables.
+ *
  * Looks up the value of a property based on a previous migration.
  *
  * It is important to maintain relationships among content coming from the
