@@ -92,6 +92,8 @@ process:
     migration: type_article
   promote: promote
   
+  # Added custom query in the our custom source plugin. See custom_node_translations
+  # and this line. $row->setSourceProperty('alias', '/' . $alias);
   path/alias: alias
   path/pathauto:
     default_value: false
