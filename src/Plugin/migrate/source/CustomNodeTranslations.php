@@ -12,6 +12,10 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Note: Just copied the Core Drupal 7 Node source plugin.
+ * Question: Why did I not inherit this plugin instead of overriding?
+ * The reason is I don't want to merge/return the parent::prepareRow($row);
+ *
  * Drupal 7 node source from database.
  *
  * Available configuration keys:
