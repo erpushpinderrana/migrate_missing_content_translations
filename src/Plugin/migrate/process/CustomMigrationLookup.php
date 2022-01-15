@@ -14,7 +14,8 @@ use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Note: Copy the Migration Lookup plugin to write custom queries in our case.
+ * Note: Copied the Core Migration Lookup plugin here to write custom 
+ * logic/queries in this case.
  * Question: Why did I not inherit this plugin instead of overriding?
  * Well, there are a couple of reasons:
  * The base (source language) migration modules are no longer available and
@@ -211,6 +212,8 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
       }
       $lookup_value = (array) $lookup_value;
       $this->skipInvalid($lookup_value);
+      
+      // For image migration, we get fid so adding custom condition for that.
       if ($lookup_migration_id == 'media_image') {
         $lookup_value = $lookup_value['fid'];
       }
