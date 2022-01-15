@@ -4,10 +4,8 @@ namespace Drupal\migrate_missing_content_translations\Plugin\migrate\process;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\migrate\MigrateException;
 use Drupal\migrate\MigrateLookupInterface;
 use Drupal\migrate\MigrateSkipProcessException;
-use Drupal\migrate\MigrateSkipRowException;
 use Drupal\migrate\MigrateStubInterface;
 use Drupal\migrate\ProcessPluginBase;
 use Drupal\migrate\Plugin\MigrationInterface;
@@ -213,91 +211,32 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
       }
       $lookup_value = (array) $lookup_value;
       $this->skipInvalid($lookup_value);
+      if ($lookup_migration_id == 'media_image') {
+        $lookup_value = $lookup_value['fid'];
+      }
       $source_id_values[$lookup_migration_id] = $lookup_value;
-      dump(
-        '---------------------------------------------------------------------',
-        '|                             $source_id_values                               |',
-        '---------------------------------------------------------------------',
-        $source_id_values,
-        '---------------------------------------------------------------------',
-        '|                           $source_id                            |',
-        '---------------------------------------------------------------------'
-      );
-      // Re-throw any PluginException as a MigrateException so the executable
-      // can shut down the migration.
-      try {
-        $destination_id_array = $this->migrateLookup->lookup($lookup_migration_id, $lookup_value);
-      }
-      catch (PluginNotFoundException $e) {
-        $destination_id_array = [];
-      }
-      catch (MigrateException $e) {
-        throw $e;
-      }
-      catch (\Exception $e) {
-        throw new MigrateException(sprintf('A %s was thrown while processing this migration lookup', gettype($e)), $e->getCode(), $e);
-      }
-
-      if ($destination_id_array) {
-        $destination_ids = array_values(reset($destination_id_array));
-        break;
-      }
     }
-
-    if (!$destination_ids && !empty($this->configuration['no_stub'])) {
-      return NULL;
+      
+    // dump(
+    //   '---------------------------------------------------------------------',
+    //   '|                             $lookup_migration_ids                  |',
+    //   '---------------------------------------------------------------------',
+    //   $lookup_migration_ids
+    // );
+    $connection = \Drupal::database();
+    foreach ($lookup_migration_ids as $lookup_migration_id) {
+      $query = $connection->select('migrate_map_' . $lookup_migration_id, 't');
+      $query->fields('t', ['destid1']);
+      $query->condition('t.sourceid1', $lookup_value);
+      $results = $query->execute()->fetchCol();
+      $destination_ids = $results;
     }
-
-    if (!$destination_ids && ($self || isset($this->configuration['stub_id']) || count($lookup_migration_ids) == 1)) {
-      // If the lookup didn't succeed, figure out which migration will do the
-      // stubbing.
-      if ($self) {
-        $stub_migration = $this->migration->id();
-      }
-      elseif (isset($this->configuration['stub_id'])) {
-        $stub_migration = $this->configuration['stub_id'];
-      }
-      else {
-        $stub_migration = reset($lookup_migration_ids);
-      }
-      // Rethrow any exception as a MigrateException so the executable can shut
-      // down the migration.
-      try {
-        $destination_ids = $this->migrateStub->createStub($stub_migration, $source_id_values[$stub_migration], [], FALSE);
-      }
-      catch (\LogicException $e) {
-        // For BC reasons, we must allow attempting to stub a derived migration.
-      }
-      catch (PluginNotFoundException $e) {
-        // For BC reasons, we must allow attempting to stub a non-existent
-        // migration.
-      }
-      catch (MigrateException $e) {
-        throw $e;
-      }
-      catch (MigrateSkipRowException $e) {
-        throw $e;
-      }
-      catch (\Exception $e) {
-        throw new MigrateException(sprintf('A(n) %s was thrown while attempting to stub.', gettype($e)), $e->getCode(), $e);
-      }
-    }
-    $connection = \Drupal\Core\Database\Database::getConnection('default', 'default');
-    $query = $connection->select('migrate_map_type_article', 't');
-    $query->fields('t', ['destid1']);
-    $query->condition('t.sourceid1', $lookup_value);
-    $results = $query->execute()->fetchCol();
-    $destination_ids = $results;
-
-    dump(
-      '---------------------------------------------------------------------',
-      '|                             $destination_ids_last                               |',
-      '---------------------------------------------------------------------',
-      $destination_ids,
-      '---------------------------------------------------------------------',
-      '|                           $Destination                            |',
-      '---------------------------------------------------------------------'
-    );
+    // dump(
+    //   '---------------------------------------------------------------------',
+    //   '|                             $destination_ids_last                  |',
+    //   '---------------------------------------------------------------------',
+    //   $destination_ids
+    // );
     if ($destination_ids) {
       if (count($destination_ids) == 1) {
         return reset($destination_ids);
