@@ -1,0 +1,70 @@
+# Migration unique id.
+# The Hero Content individual (child) paragraph that holds content from D7 Field Collection - Hero Content section.  
+id: migrate_nested_paragraphs_hero_content
+label: Migrate Field Collection - Hero Content
+migration_group: migrate_content_translations
+migration_tags:
+  - node
+  - article
+  - fc
+source:
+  # Custom source plugin to fetch content from D7 Field Collection. 
+  #
+  # The custom_d7_field_collection_item plugin fetch the content from
+  # field_article_fc_items Field Collection. In d7, the field name of
+  # this FC is field_article_fc_items.
+  plugin: custom_d7_field_collection_item
+  
+  # D7 Parent Field Collection field name (i.e. field_article_fc_items) where Hero content fields
+  # are part of this Field Collection.
+  field_name: field_article_fc_items
+
+  # D7 Database key
+  key: drupal7
+
+process:
+  # Set the mapping for all the fields of that particular D7 field collection to D9 paragraph.
+  
+  # Mapping Sub title field between D7 Hero Collection - Field Collection and D9 Paragraph.
+  field_sub_title: field_sub_title
+  
+  # Mapping Blogs References field between D7 Hero Collection - Field Collection and D9 Paragraph.
+  # Since the Blogs Reference field is a node reference field so we should use Migration Lookup.
+  # Though we can't use the OOTB Migration Lookup module as the existing base/source migration
+  # plugins are no longer available. Hence, developed custom lookup to use the existing migration
+  # mapping tables to get the correct destination id. The custom_migration_lookup
+  # plugin gets the destination id from the existing mapping table i.e. migrate_map_type_article.
+  # Now the processor knows for what node needs to be added.
+  
+  # Example: In D7, there is a Blog node nid 2 (source language). Since the source language migration
+  # is already taken place so we could directly fetch the destination id by looking in the old
+  # existing migration mapping table i.e migrate_map_type_blogs.
+  # Note all the migration mapping table starts with `migrate_map_`.
+  # Let's say the destination id for 2 is 201 in this table. So this migration look up will return 201.
+  # Once we know the destination id then it is just a matter of associated translations. 
+  field_blogs_references:
+    plugin: custom_migration_lookup
+    source: field_blogs_references
+    migration: type_blogs
+  
+  # Not adding the same revision id from D7 because it may conflict with any existing revision id.
+  # Let it create new one whenever a new paragraph creates.
+  #revision_id: revision_id
+
+  # The D9 Hero Content individual (child) paragraph type.
+  type:
+    plugin: default_value
+    default_value: article_fc_items_hero_content
+    
+# Migration destination    
+destination:
+  plugin: entity_reference_revisions:paragraph
+
+migration_dependencies: {  }
+
+# Always add thebelow lines to ensure whenever the module gets uninstalled,
+# the relevant active configurations also gets uninstalled.
+dependencies:
+  enforced:
+    module:
+      - migrate_content_translations
