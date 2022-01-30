@@ -25,10 +25,10 @@ source:
 process:
   # Set the mapping for all the fields of that particular D7 field collection to D9 paragraph.
   
-  # Mapping Sub title field between D7 Hero Collection - Field Collection and D9 Paragraph.
+  # Mapping Sub title field between D7 Hero Content - Field Collection and D9 Paragraph.
   field_sub_title: field_sub_title
   
-  # Mapping Blogs References field between D7 Hero Collection - Field Collection and D9 Paragraph.
+  # Mapping Blogs References field between D7 Hero Content - Field Collection and D9 Paragraph.
   # Since the Blogs Reference field is a node reference field so we should use Migration Lookup.
   # Though we can't use the OOTB Migration Lookup module as the existing base/source migration
   # plugins are no longer available. Hence, developed custom lookup to use the existing migration
@@ -41,7 +41,7 @@ process:
   # existing migration mapping table i.e migrate_map_type_blogs.
   # Note all the migration mapping table starts with `migrate_map_`.
   # Let's say the destination id for 2 is 201 in this table. So this migration look up will return 201.
-  # Once we know the destination id then it is just a matter of associated translations. 
+  # Once we know the destination id then it is just a matter of process the correct mapping. 
   field_blogs_references:
     plugin: custom_migration_lookup
     source: field_blogs_references
