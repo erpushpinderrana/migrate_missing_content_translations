@@ -1,0 +1,72 @@
+# Migration unique id.
+# The Banner Content individual (child) paragraph that holds content from D7 Field Collection - Banner Content section.  
+id: migrate_nested_paragraphs_banner_content
+label: Migrate Field Collection - Banner Content
+migration_group: migrate_content_translations
+migration_tags:
+  - node
+  - article
+  - fc
+source:
+  # Custom source plugin to fetch content from D7 Field Collection. 
+  #
+  # The custom_d7_field_collection_item plugin fetch the content from
+  # field_article_fc_items Field Collection. In d7, the field name of
+  # this FC is field_article_fc_items.
+  plugin: custom_d7_field_collection_item
+  
+  # D7 Parent Field Collection field name (i.e. field_article_fc_items) where Banner content fields
+  # are part of this Field Collection.
+  field_name: field_article_fc_items
+
+  # D7 Database key
+  key: drupal7
+
+process:
+  # Set the mapping for all the fields of that particular D7 field collection to D9 paragraph.
+  
+  # Mapping Sub title field between D7 Banner Content - Field Collection and D9 Paragraph.
+  field_banner_title: field_banner_title
+  
+  # Mapping Banner Image field between D7 Banner Content - Field Collection and D9 Paragraph.
+  # Since the actual Images have already migrated as part of media image migration so
+  # map the relevant fid in the destination field. Though we can't use the OOTB
+  # Migration Lookup module as the existing base/source migration plugins are no longer
+  # available. Hence, developed custom lookup to use the existing migration
+  # mapping tables to get the correct destination id. The custom_migration_lookup
+  # plugin gets the destination id from the existing mapping table i.e. migrate_map_media_image.
+  # Now the processor knows for what node needs to be added.
+  
+  # Example: In D7, there is a banner image which fid is 2 (source language). Since the source
+  # language migration is already taken place so we could directly fetch the destination id
+  # by looking in the old existing migration mapping table i.e migrate_map_media_image.
+  # Note all the migration mapping table starts with `migrate_map_`.
+  # Let's say the destination fid for 2 is 201 in this table. So this migration look up
+  # will return 201.
+  field_banner_image:
+    plugin: custom_migration_lookup
+    source: field_banner_image
+    migration: media_image
+    no_stub: true
+  
+  # Not adding the same revision id from D7 because it may conflict with any existing revision id.
+  # Let it create new one whenever a new paragraph creates.
+  #revision_id: revision_id
+
+  # The D9 Banner Content individual (child) paragraph type.
+  type:
+    plugin: default_value
+    default_value: article_fc_items_banner_content
+    
+# Migration destination    
+destination:
+  plugin: entity_reference_revisions:paragraph
+
+migration_dependencies: {  }
+
+# Always add thebelow lines to ensure whenever the module gets uninstalled,
+# the relevant active configurations also gets uninstalled.
+dependencies:
+  enforced:
+    module:
+      - migrate_content_translations
