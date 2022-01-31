@@ -42,7 +42,7 @@ source:
   #   'host'     => getenv('DB_MYSQL_HOST'),
   #   'username' => getenv('DB_MYSQL_USER'),
   #   'password' => getenv('DB_MYSQL_PASSWORD'),
-  #   'database' => 'drupal7',
+  #   'database' => 'drupal7db',
   # ];
   key: drupal7
 
