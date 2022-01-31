@@ -12,10 +12,10 @@ Let's levergae a few of OOTB modules as listed below.
 4. Create a custom module for the migration i.e. migrate_missing_content_translations
 
 # Custom Module
-Since the existing base/source migration plugins are no longer available hence we can't use the OOTB source and MigrationLookup plugins. Create a custom source and MigrationLookup plugin. Also, there is a need to migrating Field collection from D7 so we also need to write a source plugin for getting the Field Collection items from D7. I've added detailed comment in the each config file to understand how it works.
+Since the existing base/source migration plugins are no longer available hence we can't use the OOTB source and MigrationLookup plugins. Create a custom [source](https://github.com/erpushpinderrana/migrate_missing_content_translations/blob/main/src/Plugin/migrate/source/CustomNodeTranslations.php) and [CustomMigrationLookup](https://github.com/erpushpinderrana/migrate_missing_content_translations/blob/main/src/Plugin/migrate/process/CustomMigrationLookup.php) plugin. Also, there is a need to migrating Field collection from D7 so we also need to write a [FC Source plugin](https://github.com/erpushpinderrana/migrate_missing_content_translations/blob/main/src/Plugin/migrate/source/CustomFieldCollectionItem.php) for getting the Field Collection items from D7. I've added detailed comment in the each config file to understand how it works.
 
 ## Migrate D7 Field Collection items to D9 Nested Paragraphs.
-It's a two step process. First we need to migrate the individual paragraph and once it's complete then link these paragraphs with the correct node.
+It's a two step process. First we need to migrate the individual paragraph and once it's complete then link these paragraphs with the correct node. Though, adding the relationship between newly created sub paragraphs and the parent field in the article node requires a custom solution. I tried OOTB Sub Process plugin but it couldn't work in my case so I created a [custom nested process](https://github.com/erpushpinderrana/migrate_missing_content_translations/blob/main/src/Plugin/migrate/process/CustomNestedParagraph.php) plugin.
 
 Here's the structure of D9 schema.
 ![Article Nested Paragraph in Node](https://github.com/erpushpinderrana/files/blob/master/ARTICLE%20NESTED%20ITEMS%20-%20Article%20Node%20FIeld%20.png)
