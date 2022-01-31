@@ -23,3 +23,36 @@ Here's the structure of D9 schema.
 ![Article Nested Paragraph Field](https://github.com/erpushpinderrana/files/blob/master/ARTICLE%20NESTED%20ITEMS%20Field.png)
 ![Nested Paragraph - Banner Paragraph](https://github.com/erpushpinderrana/files/blob/master/Article%20FC%20Items%20Banner%20Content.png)
 ![Nested Paragraph - Hero Paragraph](https://github.com/erpushpinderrana/files/blob/master/Article%20FC%20Items%20Hero%20Content.png)
+
+## Migrate Import Commands.
+First migrate the sub child paragraphs and once it's complete then migrate the article node migration.
+
+**Migrate Hero Content Paragraph**
+```
+drush migrate-import migrate_nested_paragraphs_hero_content
+```
+
+If we have enabled Migrate devel locally, then we can use the below command (adding `--migrate-debug`) to see the each row in the drush terminal.
+```
+drush migrate-import migrate_nested_paragraphs_hero_content --migrate-debug
+```
+**Rollback Hero Content Paragraph**
+In case, we want to rollback the migrated paragraphs hero content then run the below command.
+```
+drush migrate-rollback migrate_nested_paragraphs_hero_content
+```
+**Reset Hero Content Paragraph**
+In case, if there is any error then we may need to reset the migration. Here's the command for that.
+```
+drush migrate-reset migrate_nested_paragraphs_hero_content
+```
+
+**Run Two Other Migrations**
+The same way, we need to run the `migrate_nested_paragraphs_banner_content` migration.
+```
+drush migrate-import migrate_nested_paragraphs_banner_content
+```
+Finally, the article migration.
+```
+drush migrate-import migrate_article_translations
+```
