@@ -98,7 +98,30 @@ process:
   path/pathauto:
     default_value: false
     plugin: default_value
-    
+  
+  # Most challenging part - Associate FC field to Nested Paragraph field.
+  
+  # field_article_nested_items:
+    # plugin: sub_process
+    # source: field_article_fc_items
+    # process:
+    #   target_id:
+    #     plugin: migration_lookup
+    #     migration:
+    #       - migrate_nested_paragraphs_banner_content
+    #       - migrate_nested_paragraphs_hero_content
+    #     source: value
+
+    #   target_revision_id: revision_id
+  
+  # It was a little challenging process. After running the individual Child Paragraph
+  # migrations, the next step was to associate the paragraphs with the correct parent
+  # paragraph field which is part of a node itself.
+  # For example: In article content type there is `field_article_nested_items` field
+  # which has 2 nested paragraphs (see in migration_dependencies property in this file).
+  # First, I tried the sub_process plugin but somehow it couldn't work for me. Though,
+  # I got the idea what kind of array needs to be returned to this field. Hence, I wrote
+  # a custom plugin to make it work.
   field_article_nested_items:
     plugin: custom_nested_paragraph
     source: field_article_fc_items  
@@ -117,3 +140,12 @@ dependencies:
   enforced:
     module:
       - migrate_content_translations
+      # Add the list of migrations that should be run before running this migration.
+
+# Add the list of migrations that should be run prior to this migration.
+# Sub Paragraph migrations should be run before running this parent node migration.
+migration_dependencies:
+  required:
+    - migrate_nested_paragraphs_banner_content
+    - migrate_nested_paragraphs_hero_content
+
