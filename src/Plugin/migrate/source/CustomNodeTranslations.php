@@ -194,6 +194,19 @@ class CustomNodeTranslations extends FieldableEntity {
 //       '|                           $row                            |',
 //       '---------------------------------------------------------------------'
 //     );
+    
+    // To triage 1:1 mapping between source and destination, we may add debugging info.
+    // Add a text field (i.e. field_debug) with Unlimited Allowed number of values in the Article content type. 
+//     $debug = [
+//       0 => 'Source Nid: ' . $nid,
+//       1 => 'D7 Content Type: ' . $row->getSourceProperty('type'),
+//       2 => 'Node Language: ' . $langcode,
+//       3 => 'Node Status: ' . $row->getSourceProperty('status'),
+//     ];
+
+    // Store debug info.
+//     $row->setSourceProperty('field_debug', $debug);
+    
     return $row;
     //return parent::prepareRow($row);
   }
