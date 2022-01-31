@@ -12,10 +12,12 @@ use Drupal\migrate\Plugin\MigrationInterface;
 use Drupal\migrate\MigrateExecutableInterface;
 use Drupal\migrate\Row;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Database\Connection;
 
 /**
  * Note: Copied the Core Migration Lookup plugin here to write custom 
  * logic/queries in this case.
+ *
  * Question: Why did I not inherit this plugin instead of overriding?
  * Well, there are a couple of reasons:
  * The base (source language) migration modules are no longer available and
@@ -155,6 +157,13 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
   protected $migrateStub;
 
   /**
+   * The database connection service.
+   *
+   * @var \Drupal\Core\Database;
+   */
+  protected $connection;
+
+  /**
    * Constructs a MigrationLookup object.
    *
    * @param array $configuration
@@ -170,11 +179,12 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
    * @param \Drupal\migrate\MigrateStubInterface $migrate_stub
    *   The migrate stub service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, MigrateLookupInterface $migrate_lookup, MigrateStubInterface $migrate_stub) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration, MigrateLookupInterface $migrate_lookup, MigrateStubInterface $migrate_stub, Connection $connection) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->migration = $migration;
     $this->migrateLookup = $migrate_lookup;
     $this->migrateStub = $migrate_stub;
+    $this->connection = $connection;
   }
 
   /**
@@ -187,7 +197,8 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
       $plugin_definition,
       $migration,
       $container->get('migrate.lookup'),
-      $container->get('migrate.stub')
+      $container->get('migrate.stub'),
+      $container->get('database')
     );
   }
 
@@ -226,9 +237,9 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
     //   '---------------------------------------------------------------------',
     //   $lookup_migration_ids
     // );
-    $connection = \Drupal::database();
+    
     foreach ($lookup_migration_ids as $lookup_migration_id) {
-      $query = $connection->select('migrate_map_' . $lookup_migration_id, 't');
+      $query = $this->connection->->select('migrate_map_' . $lookup_migration_id, 't');
       $query->fields('t', ['destid1']);
       $query->condition('t.sourceid1', $lookup_value);
       $results = $query->execute()->fetchCol();
