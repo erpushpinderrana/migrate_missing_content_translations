@@ -63,5 +63,10 @@ drush migrate-import migrate_article_translations
 ```
 
 **Migrate only one or couple of content**
+```
 drush migrate-import migrate_article_translations --idlist=573461
+```
+
+```
 drush migrate-rollback migrate_article_translations --idlist=573461
+```
