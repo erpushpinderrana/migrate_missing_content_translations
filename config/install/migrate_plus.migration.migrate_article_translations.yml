@@ -59,6 +59,9 @@ process:
   body: body
   field_subheading: field_subheading
   
+  # Enable debug info - 1:1 mapping (source node info)
+  #field_debug: field_debug
+  
   # Using field_link plugin provided by core link module.
   # Look for this syntax for more understanding.
   # * @MigrateProcessPlugin(
