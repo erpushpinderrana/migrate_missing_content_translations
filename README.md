@@ -38,21 +38,30 @@ drush migrate-import migrate_nested_paragraphs_hero_content --migrate-debug
 ```
 **Rollback Hero Content Paragraph**
 In case, we want to rollback the migrated paragraphs hero content then run the below command.
+
 ```
 drush migrate-rollback migrate_nested_paragraphs_hero_content
 ```
 **Reset Hero Content Paragraph**
 In case, if there is any error then we may need to reset the migration. Here's the command for that.
+
 ```
 drush migrate-reset migrate_nested_paragraphs_hero_content
 ```
 
 **Run Two Other Migrations**
 The same way, we need to run the `migrate_nested_paragraphs_banner_content` migration.
+
 ```
 drush migrate-import migrate_nested_paragraphs_banner_content
 ```
+
 Finally, the article migration.
+
 ```
 drush migrate-import migrate_article_translations
 ```
+
+**Migrate only one or couple of content**
+drush migrate-import migrate_article_translations --idlist=573461
+drush migrate-rollback migrate_article_translations --idlist=573461
