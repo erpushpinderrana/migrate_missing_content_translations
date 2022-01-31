@@ -138,6 +138,7 @@ class CustomNodeTranslations extends FieldableEntity {
     $nid = $row->getSourceProperty('nid');
     $vid = $row->getSourceProperty('vid');
     $type = $row->getSourceProperty('type');
+    $langcode = $row->getSourceProperty('language');
 
     // If this entity was translated using Entity Translation, we need to get
     // its source language to get the field values in the right language.
