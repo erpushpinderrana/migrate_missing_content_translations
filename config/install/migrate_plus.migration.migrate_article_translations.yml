@@ -99,6 +99,10 @@ process:
     default_value: false
     plugin: default_value
     
+  field_article_nested_items:
+    plugin: custom_nested_paragraph
+    source: field_article_fc_items  
+    
 # Migration destination    
 destination:
   # Create article nodes from the source data,
