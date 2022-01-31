@@ -8,7 +8,7 @@ Migrate content translations from D7 to D9 when the base migration modules are n
 Let's levergae a few of OOTB modules as listed below.
 1. [Migrate Tools](https://www.drupal.org/project/migrate_tools/)
 2. [Migrate Plus](https://www.drupal.org/project/migrate_plus/)
-3. [Migrate Devel](https://www.drupal.org/project/migrate_devel) - It's not a mandatory module and required on production. It's really helpful during the development.
+3. [Migrate Devel](https://www.drupal.org/project/migrate_devel) - It's not a mandatory module and not required on production. It's really helpful during the development.
 4. Create a custom module for the migration i.e. migrate_missing_content_translations
 
 # Custom Module
