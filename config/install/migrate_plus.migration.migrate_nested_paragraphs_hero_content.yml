@@ -62,7 +62,7 @@ destination:
 
 migration_dependencies: {  }
 
-# Always add thebelow lines to ensure whenever the module gets uninstalled,
+# Always add the below lines to ensure whenever the module gets uninstalled,
 # the relevant active configurations also gets uninstalled.
 dependencies:
   enforced:
