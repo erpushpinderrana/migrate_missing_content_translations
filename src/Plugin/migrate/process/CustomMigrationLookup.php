@@ -239,7 +239,7 @@ class CustomMigrationLookup extends ProcessPluginBase implements ContainerFactor
     // );
     
     foreach ($lookup_migration_ids as $lookup_migration_id) {
-      $query = $this->connection->->select('migrate_map_' . $lookup_migration_id, 't');
+      $query = $this->connection->select('migrate_map_' . $lookup_migration_id, 't');
       $query->fields('t', ['destid1']);
       $query->condition('t.sourceid1', $lookup_value);
       $results = $query->execute()->fetchCol();
