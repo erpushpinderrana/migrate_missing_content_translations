@@ -142,7 +142,7 @@ destination:
 dependencies:
   enforced:
     module:
-      - migrate_content_translations
+      - migrate_missing_content_translations
 
 # Add the list of migrations that should be run prior to this migration.
 # Sub Paragraph migrations should be run before running this parent node migration.
