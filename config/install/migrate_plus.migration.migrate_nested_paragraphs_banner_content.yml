@@ -69,4 +69,4 @@ migration_dependencies: {  }
 dependencies:
   enforced:
     module:
-      - migrate_content_translations
+      - migrate_missing_content_translations
